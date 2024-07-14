@@ -1,14 +1,14 @@
-// controllers/credentialController.js
 const Credential = require('../models/Credential');
 
 // Get all credentials
 exports.getCredentials = async (req, res) => {
   try {
+    // Fetch all credentials and populate the 'division' field with its 'name' from the Division model
     const credentials = await Credential.find().populate('division', 'name');
-    res.json(credentials);
+    res.json(credentials); // Send the fetched credentials as JSON response
   } catch (err) {
-    console.error('Error fetching credentials:', err.message);
-    res.status(500).send('Server Error');
+    console.error('Error fetching credentials:', err.message); // Log any errors that occur
+    res.status(500).send('Server Error'); // Send a 500 server error response
   }
 };
 
@@ -16,12 +16,13 @@ exports.getCredentials = async (req, res) => {
 exports.createCredential = async (req, res) => {
   const { title, username, password, division } = req.body;
   try {
+    // Create a new Credential object with the provided data
     const newCredential = new Credential({ title, username, password, division });
-    await newCredential.save();
-    res.status(201).json(newCredential);
+    await newCredential.save(); // Save the new credential to the database
+    res.status(201).json(newCredential); // Send the newly created credential as JSON response with status 201 (Created)
   } catch (err) {
-    console.error('Error creating credential:', err.message);
-    res.status(500).send('Server Error');
+    console.error('Error creating credential:', err.message); // Log any errors that occur
+    res.status(500).send('Server Error'); // Send a 500 server error response
   }
 };
 
@@ -30,18 +31,19 @@ exports.updateCredential = async (req, res) => {
   const { id } = req.params;
   const { title, username, password, division } = req.body;
   try {
+    // Find the credential by ID and update it with the provided data, returning the updated document
     const updatedCredential = await Credential.findByIdAndUpdate(
       id,
       { title, username, password, division },
-      { new: true }
+      { new: true } // Ensure the updated document is returned
     );
     if (!updatedCredential) {
-      return res.status(404).json({ message: 'Credential not found' });
+      return res.status(404).json({ message: 'Credential not found' }); // If credential not found, return a 404 response
     }
-    res.json(updatedCredential);
+    res.json(updatedCredential); // Send the updated credential as JSON response
   } catch (err) {
-    console.error('Error updating credential:', err.message);
-    res.status(500).send('Server Error');
+    console.error('Error updating credential:', err.message); // Log any errors that occur
+    res.status(500).send('Server Error'); // Send a 500 server error response
   }
 };
 
@@ -49,13 +51,14 @@ exports.updateCredential = async (req, res) => {
 exports.deleteCredential = async (req, res) => {
   const { id } = req.params;
   try {
+    // Find the credential by ID and delete it from the database
     const deletedCredential = await Credential.findByIdAndDelete(id);
     if (!deletedCredential) {
-      return res.status(404).json({ message: 'Credential not found' });
+      return res.status(404).json({ message: 'Credential not found' }); // If credential not found, return a 404 response
     }
-    res.json({ message: 'Credential deleted successfully' });
+    res.json({ message: 'Credential deleted successfully' }); // Send a success message as JSON response
   } catch (err) {
-    console.error('Error deleting credential:', err.message);
-    res.status(500).send('Server Error');
+    console.error('Error deleting credential:', err.message); // Log any errors that occur
+    res.status(500).send('Server Error'); // Send a 500 server error response
   }
 };

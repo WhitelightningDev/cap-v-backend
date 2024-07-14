@@ -19,18 +19,18 @@ const app = express();
 connectDB();
 
 // Init Middleware
-app.use(express.json());
-app.use(cors());
+app.use(express.json()); // Middleware to parse JSON bodies
+app.use(cors()); // Middleware for enabling CORS
 
 // Define Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/ous', ouRoutes);
-app.use('/api/divisions', divisionRoutes);
-app.use('/api/credentials', credentialRoutes);
-app.use('/api/users', userRoutes); 
-app.use('/api/roles', roleRoutes); 
+app.use('/api/auth', authRoutes); // Route for authentication
+app.use('/api/ous', ouRoutes); // Route for organizational units (OUs)
+app.use('/api/divisions', divisionRoutes); // Route for divisions
+app.use('/api/credentials', credentialRoutes); // Route for credentials
+app.use('/api/users', userRoutes); // Route for users
+app.use('/api/roles', roleRoutes); // Route for roles
 
-// Protected Route Example
+// Protected Route Example: Get authenticated user details
 app.get('/api/user', authMiddleware, (req, res) => {
   res.json(req.user); // Return authenticated user details
 });
@@ -38,7 +38,7 @@ app.get('/api/user', authMiddleware, (req, res) => {
 // Get all users (Admin only)
 app.get('/api/users', authMiddleware, async (req, res) => {
   try {
-    const users = await User.find().select('-password');
+    const users = await User.find().select('-password'); // Exclude password
     res.json(users);
   } catch (error) {
     console.error('Error fetching users:', error.message);
@@ -49,7 +49,7 @@ app.get('/api/users', authMiddleware, async (req, res) => {
 // Get all credentials (Unprotected route)
 app.get('/api/credentials', async (req, res) => {
   try {
-    const credentials = await Credential.find().populate('division', 'name');
+    const credentials = await Credential.find().populate('division', 'name'); // Populate division details
     res.json(credentials);
   } catch (error) {
     console.error('Error fetching credentials:', error.message);
@@ -57,10 +57,10 @@ app.get('/api/credentials', async (req, res) => {
   }
 });
 
-// Get all divisions (Unprotected route )
+// Get all divisions (Unprotected route)
 app.get('/api/divisions', async (req, res) => {
   try {
-    const divisions = await Division.find().populate('ou', 'name');
+    const divisions = await Division.find().populate('ou', 'name'); // Populate OU details
     res.json(divisions);
   } catch (error) {
     console.error('Error fetching divisions:', error.message);
