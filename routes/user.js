@@ -1,41 +1,25 @@
 const express = require('express');
 const router = express.Router();
-const authMiddleware = require('../middleware/auth');
-const User = require('../models/User');
+const authMiddleware = require('../middleware/authMiddleware');
+const adminMiddleware = require('../middleware/adminMiddleware'); // Middleware to ensure the user is an admin
+const userController = require('../controllers/userController');
 
-// Fetch all users
-router.get('/', authMiddleware, async (req, res) => {
-  try {
-    const users = await User.find().select('-password'); // Exclude password from the response
-    res.json(users);
-  } catch (error) {
-    console.error('Error fetching users:', error.message);
-    res.status(500).json({ msg: 'Server Error' });
-  }
-});
+// Register a new user
+router.post('/register', userController.registerUser);
 
-// Update user role
-router.post('/change-role', authMiddleware, async (req, res) => {
-  const { userId, role } = req.body;
+// Login a user
+router.post('/login', userController.loginUser);
 
-  // Only allow Admins to change roles
-  if (req.user.role !== 'Admin' && req.user._id.toString() !== userId) {
-    return res.status(403).json({ msg: 'You are not authorized to change roles.' });
-  }
+// Fetch all users (Admin only)
+router.get('/', authMiddleware, adminMiddleware, userController.getAllUsers);
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ msg: 'User not found' });
-    }
+// Fetch a single user by ID
+router.get('/:userId', authMiddleware, userController.getUserById);
 
-    user.role = role;
-    await user.save();
-    res.json({ msg: 'User role updated successfully' });
-  } catch (error) {
-    console.error('Error updating user role:', error.message);
-    res.status(500).json({ msg: 'Server Error' });
-  }
-});
+// Update user role (Admin only)
+router.put('/update-role', authMiddleware, adminMiddleware, userController.updateUserRole);
+
+// Delete a user (Admin only)
+router.delete('/delete', authMiddleware, adminMiddleware, userController.deleteUser);
 
 module.exports = router;

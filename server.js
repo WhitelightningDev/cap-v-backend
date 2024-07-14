@@ -35,6 +35,16 @@ app.get('/api/user', authMiddleware, (req, res) => {
   res.json(req.user); // Return authenticated user details
 });
 
+// Get all users (Admin only)
+app.get('/api/users', authMiddleware, async (req, res) => {
+  try {
+    const users = await User.find().select('-password');
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching users:', error.message);
+    res.status(500).json({ msg: 'Server Error' });
+  }
+});
 
 // Get all credentials (Unprotected route)
 app.get('/api/credentials', async (req, res) => {
