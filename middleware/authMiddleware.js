@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const config = require('config'); // You may use config package to manage configurations
+const config = require('../config/config');
 const User = require('../models/User');
 
 const authMiddleware = async (req, res, next) => {
@@ -13,10 +13,18 @@ const authMiddleware = async (req, res, next) => {
 
   try {
     // Verify token
-    const decoded = jwt.verify(token, config.get('jwtSecret')); // Replace with your actual secret
+    const decoded = jwt.verify(token, config.JWT_SECRET);
 
     // Add user from payload
     req.user = decoded;
+
+    // Check if token is about to expire (e.g., within 30 seconds)
+    const nowInSeconds = Math.floor(Date.now() / 1000);
+    if (decoded.exp - nowInSeconds < 30) {
+      // Token is about to expire, consider refreshing it
+      const refreshedToken = jwt.sign({ id: decoded.id }, config.JWT_SECRET, { expiresIn: '1h' });
+      res.setHeader('x-auth-token', refreshedToken);
+    }
 
     // Check if user exists and retrieve user details
     const user = await User.findById(req.user.id).select('-password');
@@ -32,6 +40,10 @@ const authMiddleware = async (req, res, next) => {
     next();
   } catch (err) {
     console.error('Auth middleware error:', err.message);
+    if (err.name === 'TokenExpiredError') {
+      // Handle expired token error (optional)
+      return res.status(401).json({ msg: 'Token has expired' });
+    }
     res.status(500).json({ msg: 'Server Error' });
   }
 };

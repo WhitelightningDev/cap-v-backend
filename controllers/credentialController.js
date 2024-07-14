@@ -1,4 +1,16 @@
+// controllers/credentialController.js
 const Credential = require('../models/Credential');
+
+// Get all credentials
+exports.getCredentials = async (req, res) => {
+  try {
+    const credentials = await Credential.find().populate('division', 'name');
+    res.json(credentials);
+  } catch (err) {
+    console.error('Error fetching credentials:', err.message);
+    res.status(500).send('Server Error');
+  }
+};
 
 // Create a new credential
 exports.createCredential = async (req, res) => {
@@ -9,17 +21,6 @@ exports.createCredential = async (req, res) => {
     res.status(201).json(newCredential);
   } catch (err) {
     console.error('Error creating credential:', err.message);
-    res.status(500).send('Server Error');
-  }
-};
-
-// Get all credentials
-exports.getCredentials = async (req, res) => {
-  try {
-    const credentials = await Credential.find().populate('division', 'name');
-    res.json(credentials);
-  } catch (err) {
-    console.error('Error fetching credentials:', err.message);
     res.status(500).send('Server Error');
   }
 };

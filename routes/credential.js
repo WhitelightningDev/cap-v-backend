@@ -1,11 +1,11 @@
+// routes/credentialRoutes.js
 const express = require('express');
 const router = express.Router();
-const Credential = require('../models/Credential'); // Import Credential model
+const Credential = require('../models/Credential');
 const authMiddleware = require('../middleware/authMiddleware');
-const cors = require('cors'); // Import CORS middleware
+const config = require('../config/config');
 
-// Apply CORS middleware
-router.use(cors());
+router.use(express.json());
 
 // Fetch all credentials (Unprotected)
 router.get('/', async (req, res) => {
