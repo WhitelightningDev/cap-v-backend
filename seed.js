@@ -40,12 +40,15 @@ async function insertSampleData() {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword1 = await bcrypt.hash('password1', salt);
     const hashedPassword2 = await bcrypt.hash('password2', salt);
+    const hashedPassword3 = await bcrypt.hash('password3', salt);
 
-    const user1 = new User({ username: 'user1', password: hashedPassword1, role: 'user', division: division1._id });
-    const user2 = new User({ username: 'user2', password: hashedPassword2, role: 'user', division: division2._id });
+    const adminUser = new User({ username: 'adminuser', password: hashedPassword1, role: 'Admin', division: division1._id });
+    const managerUser = new User({ username: 'manageruser', password: hashedPassword2, role: 'Manager', division: division2._id });
+    const normalUser = new User({ username: 'normaluser', password: hashedPassword3, role: 'Normal', division: division1._id });
 
-    await user1.save();
-    await user2.save();
+    await adminUser.save();
+    await managerUser.save();
+    await normalUser.save();
 
     const credential1 = new Credential({ title: 'Website Login', username: 'admin', password: 'adminpass', division: division1._id });
     const credential2 = new Credential({ title: 'Server Login', username: 'ituser', password: 'itpass', division: division2._id });

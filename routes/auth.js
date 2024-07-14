@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
 
     jwt.sign(payload, JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
       if (err) throw err;
-      res.json({ token });
+      res.json({ token, role: user.role, username: user.username });
     });
   } catch (err) {
     console.error(err.message);
@@ -70,7 +70,7 @@ router.post('/login', async (req, res) => {
 
     jwt.sign(payload, JWT_SECRET, { expiresIn: 3600 }, (err, token) => {
       if (err) throw err;
-      res.json({ token });
+      res.json({ token, role: user.role, username: user.username });
     });
   } catch (err) {
     console.error(err.message);
