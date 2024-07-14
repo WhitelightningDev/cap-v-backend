@@ -14,20 +14,18 @@ const authMiddleware = async (req, res, next) => {
   try {
     // Verify token
     const decoded = jwt.verify(token, config.JWT_SECRET);
-
-    // Add user from payload
-    req.user = decoded;
+    console.log('Decoded user:', decoded.user); // Log decoded user for debugging
 
     // Check if token is about to expire (e.g., within 30 seconds)
     const nowInSeconds = Math.floor(Date.now() / 1000);
     if (decoded.exp - nowInSeconds < 30) {
       // Token is about to expire, consider refreshing it
-      const refreshedToken = jwt.sign({ id: decoded.id }, config.JWT_SECRET, { expiresIn: '1h' });
+      const refreshedToken = jwt.sign({ id: decoded.id }, config.JWT_SECRET, { expiresIn: '30d' }); // Token valid for 30 days
       res.setHeader('x-auth-token', refreshedToken);
     }
 
-    // Check if user exists and retrieve user details
-    const user = await User.findById(req.user.id).select('-password');
+    // Retrieve user details
+    const user = await User.findById(decoded.id).select('-password');
 
     if (!user) {
       return res.status(401).json({ msg: 'Token is not valid' });

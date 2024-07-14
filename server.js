@@ -27,15 +27,16 @@ app.use('/api/auth', authRoutes);
 app.use('/api/ous', ouRoutes);
 app.use('/api/divisions', divisionRoutes);
 app.use('/api/credentials', credentialRoutes);
-app.use('/api/users', userRoutes); // Use updated user routes
-app.use('/api/roles', roleRoutes); // Use updated role routes
+app.use('/api/users', userRoutes); 
+app.use('/api/roles', roleRoutes); 
 
 // Protected Route Example
 app.get('/api/user', authMiddleware, (req, res) => {
   res.json(req.user); // Return authenticated user details
 });
 
-// Get all credentials (Unprotected route example)
+
+// Get all credentials (Unprotected route)
 app.get('/api/credentials', async (req, res) => {
   try {
     const credentials = await Credential.find().populate('division', 'name');
@@ -46,7 +47,7 @@ app.get('/api/credentials', async (req, res) => {
   }
 });
 
-// Get all divisions (Unprotected route example)
+// Get all divisions (Unprotected route )
 app.get('/api/divisions', async (req, res) => {
   try {
     const divisions = await Division.find().populate('ou', 'name');

@@ -1,4 +1,4 @@
-// routes/credentialRoutes.js
+// credentialRoutes.js
 const express = require('express');
 const router = express.Router();
 const Credential = require('../models/Credential');
