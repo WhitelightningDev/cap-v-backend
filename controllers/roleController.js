@@ -58,3 +58,4 @@ exports.deleteRole = async (req, res) => {
     res.status(500).json({ error: 'Server error' }); // Send a 500 server error response with error message
   }
 };
+

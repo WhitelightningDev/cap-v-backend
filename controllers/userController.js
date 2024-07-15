@@ -71,7 +71,8 @@ exports.loginUser = async (req, res) => {
 // Update user role
 exports.updateUserRole = async (req, res) => {
   try {
-    const { userId, role } = req.body;
+    const { userId } = req.params;
+    const { role } = req.body;
 
     // Find user by ID
     let user = await User.findById(userId);
@@ -93,7 +94,7 @@ exports.updateUserRole = async (req, res) => {
 // Delete a user
 exports.deleteUser = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = req.params;
 
     // Find user by ID and delete
     await User.findByIdAndDelete(userId);

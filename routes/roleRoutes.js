@@ -10,6 +10,7 @@ router.post('/', authMiddleware, adminMiddleware, roleController.createRole);
 // Route to get all roles
 router.get('/', roleController.getAllRoles);
 
+
 // Route to update a role by ID (Protected route)
 router.put('/:id', authMiddleware, adminMiddleware, roleController.updateRole);
 
