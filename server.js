@@ -35,6 +35,16 @@ app.get('/api/user', authMiddleware, (req, res) => {
   res.json(req.user); // Return authenticated user details
 });
 
+// Get all roles (Unprotected route)
+app.get('/api/roles', async (req, res) => {
+  try {
+    const roles = await Role.find();
+    res.json(roles);
+  } catch (error) {
+    console.error('Error fetching roles:', error.message);
+    res.status(500).json({ msg: 'Server Error' });
+  }
+});
 
 // Get all credentials (Unprotected route)
 app.get('/api/credentials', async (req, res) => {
