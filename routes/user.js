@@ -5,7 +5,8 @@ const adminMiddleware = require('../middleware/adminMiddleware'); // Middleware 
 const userController = require('../controllers/userController');
 
 // Register a new user
-router.post('/register', userController.registerUser);
+router.post('/', userController.registerUser);
+
 
 // Login a user
 router.post('/login', userController.loginUser);
