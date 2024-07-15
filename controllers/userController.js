@@ -92,6 +92,57 @@ exports.updateUserRole = async (req, res) => {
   }
 };
 
+// Assign user to division by user ID (Admin only)
+exports.assignUserToDivision = async (req, res) => {
+  const { divisionId } = req.body;
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Assign division to user if not already assigned
+    if (!user.divisions.includes(divisionId)) {
+      user.divisions.push(divisionId);
+      await user.save();
+    }
+
+    res.status(200).json({ message: 'User assigned to division successfully' });
+  } catch (error) {
+    console.error('Error assigning user to division:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Unassign user from division by user ID (Admin only)
+exports.unassignUserFromDivision = async (req, res) => {
+  const { divisionId } = req.body;
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const divisionIndex = user.divisions.indexOf(divisionId);
+    if (divisionIndex === -1) {
+      return res.status(404).json({ error: 'User is not assigned to this division' });
+    }
+
+    // Remove division from user's assigned divisions
+    user.divisions.splice(divisionIndex, 1);
+    await user.save();
+
+    res.status(200).json({ message: 'User unassigned from division successfully' });
+  } catch (error) {
+    console.error('Error unassigning user from division:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
 // Update user roles by user ID (Admin only)
 exports.updateUserRoles = async (req, res) => {
   const { userId } = req.params;

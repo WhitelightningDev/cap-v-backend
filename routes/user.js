@@ -22,4 +22,10 @@ router.put('/:userId/update-role', authMiddleware, adminMiddleware, userControll
 // Delete a user by ID (Admin only)
 router.delete('/:userId/delete', authMiddleware, adminMiddleware, userController.deleteUser);
 
+// Assign user to division by user ID (Admin only)
+router.put('/:userId/assign', authMiddleware, adminMiddleware, userController.assignUserToDivision);
+
+// Unassign user from division by user ID (Admin only)
+router.put('/:userId/unassign', authMiddleware, adminMiddleware, userController.unassignUserFromDivision);
+
 module.exports = router;
