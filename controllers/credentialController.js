@@ -12,6 +12,22 @@ exports.getCredentials = async (req, res) => {
   }
 };
 
+// Get a single credential by ID
+exports.getCredentialById = async (req, res) => {
+  const { id } = req.params;
+  try {
+    // Fetch the credential by ID and populate the 'division' field with its 'name' from the Division model
+    const credential = await Credential.findById(id).populate('division', 'name');
+    if (!credential) {
+      return res.status(404).json({ message: 'Credential not found' }); // If credential not found, return a 404 response
+    }
+    res.json(credential); // Send the fetched credential as JSON response
+  } catch (err) {
+    console.error('Error fetching credential:', err.message); // Log any errors that occur
+    res.status(500).send('Server Error'); // Send a 500 server error response
+  }
+};
+
 // Create a new credential
 exports.createCredential = async (req, res) => {
   const { title, username, password, division } = req.body;

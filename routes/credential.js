@@ -5,6 +5,9 @@ const credentialController = require('../controllers/credentialController');
 // Get all credentials
 router.get('/', credentialController.getCredentials);
 
+// Get a single credential by ID
+router.get('/:id', credentialController.getCredentialById);
+
 // Create a new credential
 router.post('/', credentialController.createCredential);
 
