@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Role = require('../models/Role'); // Assuming Role model is imported correctly
 const config = require('../config/config');
 
 // Register a new user
@@ -87,6 +88,31 @@ exports.updateUserRole = async (req, res) => {
     res.json({ message: 'User role updated successfully' });
   } catch (error) {
     console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Update user roles by user ID (Admin only)
+exports.updateUserRoles = async (req, res) => {
+  const { userId } = req.params;
+  const { roles } = req.body;
+
+  try {
+    // Validate roles
+    const validRoles = await Role.find({ _id: { $in: roles } });
+    if (validRoles.length !== roles.length) {
+      return res.status(400).json({ error: 'Invalid role IDs' });
+    }
+
+    // Find the user by ID and update their roles
+    const updatedUser = await User.findByIdAndUpdate(userId, { roles }, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ message: 'User roles updated successfully', user: updatedUser });
+  } catch (error) {
+    console.error('Error updating user roles:', error.message);
     res.status(500).json({ error: 'Server error' });
   }
 };

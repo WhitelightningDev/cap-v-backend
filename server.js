@@ -8,7 +8,7 @@ const credentialRoutes = require('./routes/credential');
 const userRoutes = require('./routes/user'); // Updated user routes import
 const roleRoutes = require('./routes/roleRoutes'); // Updated role routes import
 const authMiddleware = require('./middleware/authMiddleware');
-const User = require('./models/User');
+const Role = require('./models/Role'); // Import Role model
 const Credential = require('./models/Credential');
 const Division = require('./models/Division');
 const config = require('./config/config'); // Added config import for JWT secret
@@ -35,7 +35,7 @@ app.get('/api/user', authMiddleware, (req, res) => {
   res.json(req.user); // Return authenticated user details
 });
 
-// Get all roles (Unprotected route)
+// Additional Routes for Getting Data (Unprotected)
 app.get('/api/roles', async (req, res) => {
   try {
     const roles = await Role.find();
@@ -46,7 +46,6 @@ app.get('/api/roles', async (req, res) => {
   }
 });
 
-// Get all credentials (Unprotected route)
 app.get('/api/credentials', async (req, res) => {
   try {
     const credentials = await Credential.find().populate('division', 'name'); // Populate division details
@@ -57,7 +56,6 @@ app.get('/api/credentials', async (req, res) => {
   }
 });
 
-// Get all divisions (Unprotected route)
 app.get('/api/divisions', async (req, res) => {
   try {
     const divisions = await Division.find().populate('ou', 'name'); // Populate OU details

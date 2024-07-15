@@ -1,4 +1,5 @@
 const Role = require('../models/Role');
+const config = require('../config/config');
 
 // Create a new role
 exports.createRole = async (req, res) => {
@@ -58,4 +59,3 @@ exports.deleteRole = async (req, res) => {
     res.status(500).json({ error: 'Server error' }); // Send a 500 server error response with error message
   }
 };
-
