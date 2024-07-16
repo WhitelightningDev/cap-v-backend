@@ -3,8 +3,8 @@ const Credential = require('../models/Credential');
 // Get all credentials
 exports.getCredentials = async (req, res) => {
   try {
-    // Fetch all credentials and populate the 'division' field with its 'name' from the Division model
-    const credentials = await Credential.find().populate('division', 'name');
+    // Fetch all credentials and populate the 'division' and 'ou' fields with their 'name' from the Division and OU models
+    const credentials = await Credential.find().populate('division', 'name').populate('ou', 'name');
     res.json(credentials); // Send the fetched credentials as JSON response
   } catch (err) {
     console.error('Error fetching credentials:', err.message); // Log any errors that occur
@@ -16,8 +16,8 @@ exports.getCredentials = async (req, res) => {
 exports.getCredentialById = async (req, res) => {
   const { id } = req.params;
   try {
-    // Fetch the credential by ID and populate the 'division' field with its 'name' from the Division model
-    const credential = await Credential.findById(id).populate('division', 'name');
+    // Fetch the credential by ID and populate the 'division' and 'ou' fields with their 'name' from the Division and OU models
+    const credential = await Credential.findById(id).populate('division', 'name').populate('ou', 'name');
     if (!credential) {
       return res.status(404).json({ message: 'Credential not found' }); // If credential not found, return a 404 response
     }
@@ -30,10 +30,10 @@ exports.getCredentialById = async (req, res) => {
 
 // Create a new credential
 exports.createCredential = async (req, res) => {
-  const { title, username, password, division } = req.body;
+  const { title, username, password, division, ou } = req.body;
   try {
     // Create a new Credential object with the provided data
-    const newCredential = new Credential({ title, username, password, division });
+    const newCredential = new Credential({ title, username, password, division, ou });
     await newCredential.save(); // Save the new credential to the database
     res.status(201).json(newCredential); // Send the newly created credential as JSON response with status 201 (Created)
   } catch (err) {
@@ -45,12 +45,12 @@ exports.createCredential = async (req, res) => {
 // Update a credential by ID
 exports.updateCredential = async (req, res) => {
   const { id } = req.params;
-  const { title, username, password, division } = req.body;
+  const { title, username, password, division, ou } = req.body;
   try {
     // Find the credential by ID and update it with the provided data, returning the updated document
     const updatedCredential = await Credential.findByIdAndUpdate(
       id,
-      { title, username, password, division },
+      { title, username, password, division, ou },
       { new: true } // Ensure the updated document is returned
     );
     if (!updatedCredential) {
