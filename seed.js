@@ -61,8 +61,20 @@ async function insertSampleData() {
     await managerUser.save();
     await normalUser.save();
 
-    const credential1 = new Credential({ title: 'Website Login', username: 'admin', password: 'adminpass', division: divisions[0]._id });
-    const credential2 = new Credential({ title: 'Server Login', username: 'ituser', password: 'itpass', division: divisions[1]._id });
+    const credential1 = new Credential({
+      title: 'Website Login',
+      username: 'admin',
+      password: 'adminpass',
+      division: divisions[0]._id,
+      ou: newsManagement._id // Add the ou 
+    });
+    const credential2 = new Credential({
+      title: 'Server Login',
+      username: 'ituser',
+      password: 'itpass',
+      division: divisions[1]._id,
+      ou: softwareReviews._id // Add the ou
+    });
 
     await credential1.save();
     await credential2.save();
