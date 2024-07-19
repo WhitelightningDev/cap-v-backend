@@ -19,7 +19,12 @@ const UserSchema = new mongoose.Schema({
   date: {
     type: Date,
     default: Date.now   // Default date is the current date/time
-  }
+  },
+  division: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Division',
+    required: true
+  },
 });
 
 // Create User model based on UserSchema

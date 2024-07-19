@@ -21,6 +21,7 @@ async function insertSampleData() {
     await Division.deleteMany({});
     await Credential.deleteMany({});
 
+    // Create OUs
     const newsManagement = new OU({ name: 'News Management' });
     const softwareReviews = new OU({ name: 'Software Reviews' });
     const hardwareReviews = new OU({ name: 'Hardware Reviews' });
@@ -31,23 +32,35 @@ async function insertSampleData() {
     await hardwareReviews.save();
     await opinionPublishing.save();
 
+    // Define division names
     const divisionNames = [
       'Finance', 'IT', 'Writing', 'Development', 'HR', 'Marketing', 'Sales', 'Customer Support',
       'Design', 'Research', 'Quality Assurance', 'Product Management', 'Operations', 'Legal'
     ];
 
+    // Create divisions and credentials
     const divisions = [];
-    for (let i = 0; i < divisionNames.length; i++) {
-      divisions.push(new Division({ name: divisionNames[i], ou: newsManagement._id }));
-      divisions.push(new Division({ name: divisionNames[i], ou: softwareReviews._id }));
-      divisions.push(new Division({ name: divisionNames[i], ou: hardwareReviews._id }));
-      divisions.push(new Division({ name: divisionNames[i], ou: opinionPublishing._id }));
+    for (let ou of [newsManagement, softwareReviews, hardwareReviews, opinionPublishing]) {
+      for (let name of divisionNames) {
+        const division = new Division({ name, ou: ou._id });
+        await division.save();
+        divisions.push(division);
+
+        // Create 2 credentials for each division
+        for (let i = 1; i <= 2; i++) {
+          const credential = new Credential({
+            title: `${name} Credential ${i}`,
+            username: `${name.toLowerCase()}user${i}`,
+            password: `${name.toLowerCase()}pass${i}`,
+            division: division._id,
+            ou: ou._id
+          });
+          await credential.save();
+        }
+      }
     }
 
-    for (const division of divisions) {
-      await division.save();
-    }
-
+    // Create users
     const salt = await bcrypt.genSalt(10);
     const hashedPassword1 = await bcrypt.hash('password1', salt);
     const hashedPassword2 = await bcrypt.hash('password2', salt);
@@ -60,24 +73,6 @@ async function insertSampleData() {
     await adminUser.save();
     await managerUser.save();
     await normalUser.save();
-
-    const credential1 = new Credential({
-      title: 'Website Login',
-      username: 'admin',
-      password: 'adminpass',
-      division: divisions[0]._id,
-      ou: newsManagement._id // Add the ou 
-    });
-    const credential2 = new Credential({
-      title: 'Server Login',
-      username: 'ituser',
-      password: 'itpass',
-      division: divisions[1]._id,
-      ou: softwareReviews._id // Add the ou
-    });
-
-    await credential1.save();
-    await credential2.save();
 
     mongoose.disconnect();
     console.log('Sample data inserted successfully.');
